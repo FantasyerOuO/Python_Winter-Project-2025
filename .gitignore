@@ -1,0 +1,5 @@
+My_Python_LAB.code-workspace
+*.csv
+__pycache__/
+*.pyc
+*.pyo
