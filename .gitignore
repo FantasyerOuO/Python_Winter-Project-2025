@@ -3,3 +3,4 @@ My_Python_LAB.code-workspace
 __pycache__/
 *.pyc
 *.pyo
+*.png
