@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智藝情感諮詢</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: #ffe4e1; /* 柔和粉色背景 */
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #ff6b81;
+            margin-bottom: 20px;
+        }
+
+        .chat-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            background: #fff;
+            border-radius: 8px;
+        }
+
+        .user-message, .chatgpt-message {
+            display: block;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        .user-message {
+            background: #ffdde1;
+            text-align: right;
+            margin-left: auto;
+        }
+
+        .chatgpt-message {
+            background: #cce5ff;
+            text-align: left;
+            margin-right: auto;
+        }
+
+        input {
+            width: 80%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff6b81;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ff4757;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>智藝情感諮詢窗口</h1>
+        
+        <div class="chat-box" id="chatBox">
+            <div class="chatgpt-message">👋 你好！請輸入你的感情煩惱，讓我來幫助你吧!。</div>
+        </div>
+
+        <br>
+        <input type="text" id="userInput" placeholder="請輸入你的問題">
+        <button onclick="sendMessage()">送出</button>
+    </div>
+
+    <script>
+        function sendMessage() {
+            let userMessage = document.getElementById("userInput").value;
+            if (userMessage.trim() === "") {
+                alert("請輸入內容!");
+                return;
+            }
+
+            let chatBox = document.getElementById("chatBox");
+
+            // 顯示使用者訊息
+            let userBubble = document.createElement("div");
+            userBubble.classList.add("user-message");
+            userBubble.innerText = userMessage;
+            chatBox.appendChild(userBubble);
+
+            document.getElementById("userInput").value = ""; // 清空輸入框
+            chatBox.scrollTop = chatBox.scrollHeight; // 滾動到底部
+
+            // 顯示打字中的動畫
+            let loadingBubble = document.createElement("div");
+            loadingBubble.classList.add("chatgpt-message");
+            loadingBubble.innerText = "智藝寶寶 正在輸入...";
+            chatBox.appendChild(loadingBubble);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // 發送請求給 Flask
+            fetch(`/ChatGPT_Test_py/${encodeURIComponent(userMessage)}`)
+                .then(response => response.text())
+                .then(data => {
+                    chatBox.removeChild(loadingBubble); // 移除打字動畫
+
+                    // 顯示 ChatGPT 回應
+                    let chatgptBubble = document.createElement("div");
+                    chatgptBubble.classList.add("chatgpt-message");
+                    chatgptBubble.innerText = data;
+                    chatBox.appendChild(chatgptBubble);
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                })
+                .catch(error => {
+                    chatBox.removeChild(loadingBubble);
+                    let errorBubble = document.createElement("div");
+                    errorBubble.classList.add("chatgpt-message");
+                    errorBubble.innerText = "發生錯誤，請稍後再試";
+                    chatBox.appendChild(errorBubble);
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                    console.error("錯誤:", error);
+                });
+        }
+    </script>
+
+</body>
+</html>
