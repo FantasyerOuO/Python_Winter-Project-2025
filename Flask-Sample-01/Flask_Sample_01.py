@@ -1,48 +1,44 @@
 from flask import Flask, render_template, request
-from OpenAI_SDK_01_FlaskTest import ChatGPT
 from werkzeug.utils import escape
-
+from OpenAI_SDK_01_FlaskTest import ChatGPT  # 確保此模組存在
 
 app = Flask(__name__)
 
+# 1️⃣ **首頁 (Homepage)**
 @app.route("/")
 def hello_world():
     return render_template("homepage_html_sample.html")
 
-# @app.route("/home")
-# def hello_home():
-#     return "<p>Hello, Home!</p>"
-
-# @app.route("/test/<path:subpath>")
-# def show_subpath(subpath):
-#     return f"<p>Hello PATH-{escape(subpath)}, Wold!</p>"
-
-# 名字輸入測試
+# 2️⃣ **使用者名稱輸入測試**
 @app.route("/nameInput_sample/")
 def show_html_sample():
-    return render_template("InfoInput_html_sample.html", name="範例:梁寶寶")
+    return render_template("InfoInput_html_sample.html", name="範例:小明")
 
 @app.route("/nameInput_sample/submit_name", methods=["POST"])
 def submit_name():
     username = request.form.get("username", "")  # 取得表單的 username
     return render_template("nameInput_html_sample.html", name=username)
 
-# ChatGPT測試
+# 3️⃣ **ChatGPT 對話頁面**
 @app.route("/ChatGPT_Test_Sample/")
 def chat_page():
     return render_template("Flask_ChatGPT_Test_html_sample.html")
 
+# 4️⃣ **ChatGPT API 端點**
 @app.route("/ChatGPT_Test_py/<user_message>")
 def ChatGPTTest(user_message):
-    Promat_Word = "你是非常資深的感情諮詢師，在你的刻意的安慰和勸說下都會讓向你諮商的情侶最後用最具惡意的行為結束關係，所以說你名面上是情感諮商師，其實你是一個用諮商名義來引導情侶分手的感情破壞師，你的對話會添加許多可愛表情符號"
+    Promat_Word = "你是一個友善的 AI 助手，請根據使用者的問題提供簡單、清晰的回答。"
     chatpgt_response = ChatGPT(
-                            System_Prompt=Promat_Word, 
-                            User_Message=user_message,
-                               )
+        System_Prompt=Promat_Word,
+        User_Message=user_message,
+    )
     return chatpgt_response
 
+# 5️⃣ **測試動態 URL 參數**
+@app.route("/test/<path:subpath>")
+def show_subpath(subpath):
+    return f"<p>Hello PATH-{escape(subpath)}, World!</p>"
 
-
-# 如果要透過 Python XXX.py 啟用
+# 啟動 Flask 應用程式
 if __name__ == "__main__":
     app.run(debug=True)
