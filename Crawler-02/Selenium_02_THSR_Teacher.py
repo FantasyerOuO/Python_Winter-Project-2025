@@ -33,7 +33,7 @@ Select(driver.find_element(By.NAME, 'toTimeTable')).select_by_visible_text('18:3
 # 第一個頁面 - 選擇日期
 # 點擊日期選擇框，然後選擇特定日期（2025 年 2 月 21 日）
 driver.find_element(By.XPATH, "//input[@class='uk-input' and @readonly='readonly']").click()
-driver.find_element(By.XPATH, "//span[@class='flatpickr-day' and @aria-label='二月 21, 2025']").click()
+driver.find_element(By.XPATH, "//span[@class='flatpickr-day' and @aria-label='二月 27, 2025']").click()
 
 # 第一個頁面 - 驗證碼處理
 # 進行驗證碼的自動輸入，透過 OCR 辨識圖片中的驗證碼
@@ -78,8 +78,8 @@ pprint.pprint(trains_info)
 for idx, train in enumerate(trains_info):
     print(f"({idx}) - {train['train_code']}, 行駛時間={train['duration']} | {train['depart_time']} -> {train['arrival_time']}")
 
-# which_train = int(input("Choose your train. Enter from 0~9:\n"))
-which_train = 0
+which_train = int(input("Choose your train. Enter from 0~9:\n"))
+# which_train = 0
 trains_info[which_train]['radio_box'].click()
 
 # 第二個頁面 - 確認訂票

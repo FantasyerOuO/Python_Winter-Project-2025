@@ -1,4 +1,5 @@
 from flask import Flask, request, abort
+from LineBOT_01_ChatGPT import ChatGPT
 
 from linebot.v3 import (
     WebhookHandler
@@ -44,6 +45,21 @@ def callback():
     return 'OK'
 
 
+# @handler.add(MessageEvent, message=TextMessageContent)
+# def handle_message(event):
+#     with ApiClient(configuration) as api_client:
+#         line_bot_api = MessagingApi(api_client)
+#         line_bot_api.reply_message_with_http_info(
+#             ReplyMessageRequest(
+#                 reply_token=event.reply_token,
+#                 # 回覆使用者的訊息
+#                 messages=[
+#                     # 這邊是回覆給使用者的訊息內容
+#                     TextMessage(text=event.message.text) 
+#                     ]
+#             )
+#         )
+
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event):
     with ApiClient(configuration) as api_client:
@@ -54,10 +70,13 @@ def handle_message(event):
                 # 回覆使用者的訊息
                 messages=[
                     # 這邊是回覆給使用者的訊息內容
-                    TextMessage(text=event.message.text) 
+                    TextMessage(text=ChatGPT(System_Prompt="一個喜歡黃色笑話的機器人", 
+                                             User_Message=event.message.text
+                                             )) 
                     ]
             )
         )
 
+
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

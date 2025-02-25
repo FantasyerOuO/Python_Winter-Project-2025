@@ -15,7 +15,7 @@ def ChatGPT(System_Prompt, User_Message, Completion_model="gpt-4o-mini") :
             }
         ]
     )
-    print(completion.choices[0].message.content)
+    return completion.choices[0].message.content
 
 
 if __name__ == "__main__":

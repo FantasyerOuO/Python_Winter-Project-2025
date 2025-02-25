@@ -7,15 +7,16 @@ def ChatGPT(System_Prompt, User_Message, Completion_model="gpt-4o-mini") :
         messages=[
             {
                 "role": "system", 
-                "content": "{System_Prompt}".format(System_Prompt=System_Prompt)
+                "content": System_Prompt
             },
             {
                 "role": "user",
-                "content": "{User_Message}".format(User_Message=User_Message)
+                "content": User_Message
             }
         ]
     )
-    print(completion.choices[0].message.content)
+    response = completion.choices[0].message.content
+    return response
 
 
 if __name__ == "__main__":
