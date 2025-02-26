@@ -55,37 +55,29 @@ def THSR_user_set(start_station, destination_station, Departure_Date, Departure_
 # 取得所有可選擇的車次資訊，並儲存為列表
 # 第二個頁面 - 列出所有車次並讓使用者選擇
 # 顯示所有可選車次，讓使用者輸入編號選擇
-def THSR_train_Info():
-    trains_info = []
+def THSR_trains_Info():
+    trains_Info = []
     trains = driver.find_element(By.CLASS_NAME, 'result-listing').find_elements(By.TAG_NAME, 'label')
 
     for train in trains:
         info = train.find_element(By.CLASS_NAME, 'uk-radio')
-        trains_info.append({
+        trains_Info.append({
             'depart_time': info.get_attribute('querydeparture'),
             'arrival_time': info.get_attribute('queryarrival'),
             'duration': info.get_attribute('queryestimatedtime'),
             'train_code': info.get_attribute('querycode'),
             'radio_box': info,
         })
-    # 第二個頁面 - 列印車次資訊
-    # 使用 pprint 以更易讀的格式列出所有車次資訊
-    # return trains_info
-# def Train_Select(trains_info):
-    for idx, train in enumerate(trains_info):
-            pprint.pprint(f"({idx}) - {train['train_code']}, 行駛時間={train['duration']} | {train['depart_time']} -> {train['arrival_time']}")
-    user_response = input("你想搭乘哪一班次呢?:\n")
-    system_prompt = f"""
-                1.瞭解目前使用者的可以做的選擇有哪些，選擇項目請查看{trains_info}
-                2.將車次資訊依順序從0排到n(車次資訊的長度)
-                3.分析使用者的言詞判斷是指排列順序、出發時間、抵達時間、行駛時間還是車次代碼
-                4.將使用者的選擇轉換成對應的車次資訊
-                5.將車次資訊轉換成對應的對應到順序
-                **6.只提取順序數字，不回傳其他文字**
-            """
-    which_train = int(ChatGPT(System_Prompt=system_prompt, User_Message=user_response))
-    print(which_train)
-    trains_info[which_train]['radio_box'].click()
+    for idx, train in enumerate(trains_Info):
+        print(
+            (f"({idx}) - {train['train_code']}, 行駛時間={train['duration']} | {train['depart_time']} -> {train['arrival_time']}\n")
+        )
+    return trains_Info
+
+
+def THSR_Train_Select(user_Train_Select):
+    trains_Info = THSR_trains_Info()
+    trains_Info[user_Train_Select]['radio_box'].click()
     driver.find_element(By.NAME, 'SubmitButton').click()
     driver.implicitly_wait(5)
 
