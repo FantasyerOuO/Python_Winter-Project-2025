@@ -84,16 +84,18 @@ def callback():
 # BOT 服務中...
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event):
+    global user_Data
     BOT_Response = "發生錯誤，請稍後再試..。"
-    print(user_Data)
+    
     # 取得使用者資料和訊息
     user_ID = event.source.user_id
     user_Msg = event.message.text
     # 設定THSR訂票資訊(需獲取 出發站、抵達站、出發日期、出發時間)
     Required_Book_Info = ["出發站", "抵達站", "出發日期", "出發時間"]
     # 確認使用者狀態
-    if user_Data.get("Intent", "") != "高鐵訂票" and user_Msg == "高鐵訂票":     # 假設使用者狀態不是高鐵訂票，且使用者輸入高鐵訂票，則更新使用者狀態 # Intent: 意圖(狀態)
-        Update_user_Data(user_ID, Intent="高鐵訂票")                
+    print(user_Data)
+    if user_Data.get("Intent", "") != "高鐵訂票" and user_Msg == "高鐵訂票":
+        Update_user_Data(user_ID, Intent="高鐵訂票") # 確保 Intent 正確存入
         BOT_Response = "請輸入你的高鐵訂位資訊，需包含：出發站、抵達站、出發日期、出發時間。" # BOT 回應
     # 如果使用者狀態為高鐵訂票
     elif user_Data.get("Intent") == "高鐵訂票": 
@@ -126,21 +128,24 @@ def handle_message(event):
                     """
         # ChatGPT處理輸入訊息
         ChatGPT_Msg_Deal = ChatGPT(System_Prompt=sys_prompts, User_Message=user_Msg)
+        app.logger.info(f"機器人回應: {ChatGPT_Msg_Deal}")
+
         Data_Convert_Dict = json.loads(ChatGPT_Msg_Deal.replace("'", "\""))
         Update_user_Data(user_ID, **Data_Convert_Dict)
+        print(user_Data)
 
          # 判斷已填的資訊
-        user_data = Get_user_Data(user_ID)  # 重新讀取一次user_data
+        user_Data = Get_user_Data(user_ID)  # 重新讀取一次user_data
         filled_slots = [
             # 已填的資訊
-            key for key in Required_Book_Info if user_data.get(key)]
+            key for key in Required_Book_Info if user_Data.get(key)]
         unfilled_slots = [
             # 未填的資訊
-            key for key in Required_Book_Info if not user_data.get(key)]
+            key for key in Required_Book_Info if not user_Data.get(key)]
 
-        app.logger.info(f"filled_slots: {filled_slots}")
-        app.logger.info(f"unfilled_slots: {unfilled_slots}")
-        app.logger.info(f"機器人回應: {BOT_Response}")
+        # app.logger.info(f"filled_slots: {filled_slots}")
+        # app.logger.info(f"unfilled_slots: {unfilled_slots}")
+        # app.logger.info(f"機器人回應: {BOT_Response}")
 
         # if unfilled_Slots:
         #     ChatGPT_Msg_Deal = ChatGPT(System_Prompt=sys_prompts, User_Message=user_Msg) # 處理使用者訊息
